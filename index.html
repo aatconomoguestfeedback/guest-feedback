@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Share your stay | AATC Onomo Allure Hotel Abuja</title>
+<meta name="description" content="Tell AATC Onomo Allure Hotel Abuja about your stay. Rate our service and facilities in about two minutes.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f1b33%22/><text x=%2250%22 y=%2268%22 font-size=%2256%22 text-anchor=%22middle%22 fill=%22%23d9a32b%22 font-family=%22Georgia%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1b33;
+    --ink-2: #1b2c52;
+    --gold: #d9a32b;
+    --gold-deep: #8a6410;
+    --gold-soft: #f7ecd0;
+    --paper: #f3f4f8;
+    --card: #fff;
+    --line: #dfe3ec;
+    --muted: #586178;
+    --danger: #b3261e;
+    --ok: #1d7a4b;
+    --serif: "Marcellus", Georgia, "Times New Roman", serif;
+    --sans: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 var(--sans); }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .wrap { width: min(1080px, 100% - 40px); margin-inline: auto; }
+
+  /* Top bar and hero */
+  .topbar { background: var(--ink); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .topbar .wrap { display: flex; align-items: center; gap: 14px; padding: 14px 0; }
+  .mark { width: 42px; height: 42px; border: 1.5px solid var(--gold); border-radius: 10px; display: grid; place-items: center; color: var(--gold); font: 1.35rem var(--serif); }
+  .brandtxt { color: #fff; line-height: 1.2; }
+  .brandtxt strong { font: 1.12rem var(--serif); font-weight: 400; display: block; }
+  .brandtxt span { color: #aab5d0; font-size: .85rem; }
+  .hero { background: var(--ink); color: #fff; padding: 44px 0 96px; position: relative; overflow: hidden; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; opacity: .07; pointer-events: none;
+    background: repeating-linear-gradient(135deg, #fff 0 1px, transparent 1px 22px);
+  }
+  .hero .wrap { position: relative; z-index: 1; }
+  .hero h1 { font: clamp(2rem, 4.4vw, 3rem)/1.1 var(--serif); font-weight: 400; margin: 0 0 12px; }
+  .hero p { margin: 0; color: #c3cbe0; max-width: 52ch; font-size: 1.05rem; }
+  .hero .tag { color: var(--gold); font-size: .95rem; margin-bottom: 10px; letter-spacing: .02em; }
+
+  /* Layout */
+  .grid { display: grid; grid-template-columns: 1fr 300px; gap: 28px; margin-top: -64px; padding-bottom: 72px; align-items: start; position: relative; z-index: 2; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 30px rgba(15,27,51,.08); }
+  .step { padding: 28px 30px; border-bottom: 1px solid var(--line); }
+  .step:last-of-type { border-bottom: 0; }
+  .step-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+  .step-no { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--gold); display: grid; place-items: center; font-weight: 600; font-size: .9rem; margin-top: 2px; }
+  .step-head h2 { margin: 0; font: 1.35rem var(--serif); font-weight: 400; }
+  .step-head p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
+
+  .subgroup { margin-bottom: 22px; }
+  .subgroup:last-child { margin-bottom: 0; }
+  .subgroup h3 { margin: 0 0 8px; font-size: .95rem; font-weight: 600; color: var(--ink-2); }
+  .rate-list { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .rate-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: #fff; }
+  .rate-row:last-child { border-bottom: 0; }
+  .rate-row:nth-child(even) { background: #fafbfd; }
+  .stars { display: flex; flex: none; }
+  .star { background: none; border: 0; padding: 4px 3px; line-height: 0; border-radius: 6px; }
+  .star svg { width: 27px; height: 27px; fill: #e1e5ee; stroke: #c9cfdd; stroke-width: .6; transition: fill .12s; }
+  .star.on svg { fill: var(--gold); stroke: #b98716; }
+  .star:hover svg { fill: #f1d48a; }
+  .star.on:hover svg { fill: var(--gold); }
+  .rate-word { width: 74px; text-align: right; font-size: .82rem; color: var(--gold-deep); font-weight: 600; }
+
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  label, .legend { font-weight: 600; font-size: .9rem; }
+  .req { color: var(--danger); }
+  .hint { color: var(--muted); font-size: .82rem; font-weight: 400; }
+  input[type=text], input[type=email], input[type=date], textarea {
+    font: inherit; padding: 12px 13px; border: 1px solid #c3c9d8; border-radius: 9px; background: #fff; color: var(--ink); width: 100%;
+  }
+  textarea { min-height: 140px; resize: vertical; }
+  input:focus, textarea:focus { outline: 3px solid var(--gold); outline-offset: 0; border-color: var(--ink); }
+  .invalid { border-color: var(--danger) !important; }
+  .err { color: var(--danger); font-size: .85rem; min-height: 1.2em; }
+  .counter { text-align: right; color: var(--muted); font-size: .8rem; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip span { display: inline-block; padding: 9px 18px; border: 1px solid #c3c9d8; border-radius: 999px; background: #fff; cursor: pointer; font-size: .92rem; }
+  .chip input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 20px; }
+  .btn { border: 0; border-radius: 9px; padding: 14px 30px; font-weight: 600; font-size: 1rem; }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--ink-2); }
+  .btn-primary:disabled { opacity: .6; cursor: progress; }
+  .btn-ghost { background: #fff; border: 1px solid #c3c9d8; }
+  .btn-ghost:hover { background: #eef0f6; }
+  .status { font-size: .92rem; }
+  .status.bad { color: var(--danger); }
+  .privacy { color: var(--muted); font-size: .82rem; margin: 14px 0 0; max-width: 62ch; }
+
+  /* Summary sidebar */
+  .summary { position: sticky; top: 20px; padding: 24px; }
+  .summary h2 { font: 1.05rem var(--serif); font-weight: 400; margin: 0 0 6px; color: var(--ink-2); }
+  .big { font: 3.4rem/1 var(--serif); color: var(--ink); }
+  .big small { font-size: 1.1rem; color: var(--muted); margin-left: 4px; }
+  .mini-stars { display: flex; gap: 3px; margin: 10px 0 4px; }
+  .mini-stars svg { width: 20px; height: 20px; fill: #e1e5ee; }
+  .mini-stars svg.on { fill: var(--gold); }
+  .sub { color: var(--muted); font-size: .88rem; }
+  .checklist { list-style: none; margin: 18px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); display: grid; gap: 9px; font-size: .9rem; }
+  .checklist li { display: flex; gap: 9px; align-items: center; color: var(--muted); }
+  .checklist li::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #b5bdcf; flex: none; }
+  .checklist li.done { color: var(--ink); }
+  .checklist li.done::before { background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.6 2.6L12 5.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat; border-color: var(--ok); }
+
+  /* Confirmation */
+  .done-card { padding: 56px 36px; text-align: center; }
+  .done-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--ok); margin: 0 auto 20px; display: grid; place-items: center; }
+  .done-icon svg { width: 32px; height: 32px; }
+  .done-card h2 { font: 1.9rem var(--serif); font-weight: 400; margin: 0 0 10px; }
+  .done-card p { color: var(--muted); max-width: 46ch; margin: 0 auto 8px; }
+  .ref { display: inline-block; margin: 18px 0 26px; padding: 8px 16px; background: var(--gold-soft); border-radius: 8px; font-weight: 600; color: var(--gold-deep); }
+
+  .notice { background: #fff4e5; border: 1px solid #f0c987; color: #6b4b0b; padding: 14px 18px; border-radius: 10px; margin: 0 0 18px; }
+  [hidden] { display: none !important; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 0 40px; }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; margin-top: -56px; }
+    .summary { position: static; order: -1; padding: 18px 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
+    .summary .checklist { display: none; }
+    .big { font-size: 2.6rem; }
+  }
+  @media (max-width: 560px) {
+    .step { padding: 22px 18px; }
+    .fields { grid-template-columns: 1fr; }
+    .rate-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .rate-word { display: none; }
+    .star svg { width: 32px; height: 32px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="mark" aria-hidden="true">A</div>
+    <div class="brandtxt"><strong>AATC Onomo Allure Hotel</strong><span>Abuja</span></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="tag">Where luxury meets warm hospitality</div>
+    <h1>How was your stay with us?</h1>
+    <p>Your feedback goes straight to our management team. It takes about two minutes.</p>
+  </div>
+</section>
+
+<div class="wrap grid">
+  <div>
+    <div class="notice" id="configNotice" hidden>This portal is not connected yet. Add your Firebase settings to <code>firebase-config.js</code> (see SETUP.md). Reviews cannot be sent until then.</div>
+
+    <form id="form" class="card" novalidate>
+      <section class="step" aria-labelledby="s1">
+        <div class="step-head">
+          <div class="step-no" aria-hidden="true">1</div>
+          <div><h2 id="s1">Rate your stay</h2><p>Tap a star for each item. Skip anything you did not use. Tap the same star again to clear it.</p></div>
+        </div>
+        <div id="groups"></div>
+        <div class="err" id="errRating" role="alert"></div>
+      </section>
+
+      <section class="step" aria-labelledby="s2">
+        <div class="step-head">
+          <div class="step-no" aria-hidden="true">2</div>
+          <div><h2 id="s2">About your stay</h2><p>Only your name is required.</p></div>
+        </div>
+        <div class="fields">
+          <div class="field full">
+            <label for="name">Full name <span class="req">*</span></label>
+            <input type="text" id="name" autocomplete="name" maxlength="120" required>
+            <div class="err" id="errName" role="alert"></div>
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="hint">(optional)</span></label>
+            <input type="email" id="email" autocomplete="email" maxlength="200">
+            <div class="err" id="errEmail" role="alert"></div>
+          </div>
+          <div class="field">
+            <label for="room">Room number <span class="hint">(optional)</span></label>
+            <input type="text" id="room" inputmode="numeric" maxlength="12">
+          </div>
+          <div class="field">
+            <label for="cin">Check-in date</label>
+            <input type="date" id="cin">
+          </div>
+          <div class="field">
+            <label for="cout">Check-out date</label>
+            <input type="date" id="cout">
+            <div class="err" id="errDates" role="alert"></div>
+          </div>
+          <div class="field full">
+            <span class="legend" id="purposeLbl">Purpose of stay</span>
+            <div class="chips" role="radiogroup" aria-labelledby="purposeLbl" id="purposes"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="s3">
+        <div class="step-head">
+          <div class="step-no" aria-hidden="true">3</div>
+          <div><h2 id="s3">Comments and suggestions</h2><p>What went well, and what could we do better?</p></div>
+        </div>
+        <div class="field">
+          <label for="comments">Tell us about your experience <span class="req">*</span></label>
+          <textarea id="comments" maxlength="2000" required></textarea>
+          <div class="counter"><span id="count">0</span> / 2000</div>
+          <div class="err" id="errComments" role="alert"></div>
+        </div>
+        <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="submit-row">
+          <button class="btn btn-primary" type="submit" id="submitBtn">Submit review</button>
+          <span class="status" id="status" role="status"></span>
+        </div>
+        <p class="privacy">Your name and contact details are visible only to hotel management and are used to follow up on your feedback.</p>
+      </section>
+    </form>
+
+    <div class="card done-card" id="done" hidden>
+      <div class="done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2>Thank you for your feedback</h2>
+      <p id="doneMsg">Your review has reached our management team. We read every one.</p>
+      <div class="ref" id="refBox">Reference: <span id="refNo"></span></div><br>
+      <button class="btn btn-ghost" id="again" type="button">Submit another review</button>
+    </div>
+  </div>
+
+  <aside class="card summary" aria-label="Your rating summary">
+    <div>
+      <h2>Your overall rating</h2>
+      <div class="big" aria-live="polite"><span id="overallVal">–</span><small>/ 5</small></div>
+      <div class="mini-stars" id="miniStars" aria-hidden="true"></div>
+      <div class="sub" id="overallHint">Rate at least one item</div>
+    </div>
+    <ul class="checklist" id="checklist">
+      <li id="ck1">Rate at least one item</li>
+      <li id="ck2">Enter your name</li>
+      <li id="ck3">Write a comment</li>
+    </ul>
+  </aside>
+</div>
+
+<footer>AATC Onomo Allure Hotel Abuja</footer>
+
+<script type="module">
+import { firebaseConfig, isConfigured } from "./firebase-config.js";
+import { GROUPS, PURPOSES } from "./shared.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = (id) => document.getElementById(id);
+const STAR = "M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z";
+const WORDS = ["", "Poor", "Fair", "Good", "Very good", "Excellent"];
+const TOTAL_ITEMS = GROUPS.reduce((n, g) => n + g.items.length, 0);
+
+let db = null;
+if (isConfigured) db = getFirestore(initializeApp(firebaseConfig));
+else $("configNotice").hidden = false;
+
+let ratings = {};
+
+/* ---------- build the rating groups ---------- */
+function starsSvg(cls) {
+  return '<svg viewBox="0 0 24 24" class="' + (cls || "") + '" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+}
+GROUPS.forEach((g) => {
+  const wrap = document.createElement("div");
+  wrap.className = "subgroup";
+  const h = document.createElement("h3");
+  h.textContent = g.title;
+  const list = document.createElement("div");
+  list.className = "rate-list";
+  g.items.forEach(([id, label]) => {
+    const row = document.createElement("div");
+    row.className = "rate-row";
+    const name = document.createElement("div");
+    name.textContent = label;
+    const right = document.createElement("div");
+    right.style.display = "flex";
+    right.style.alignItems = "center";
+    const stars = document.createElement("div");
+    stars.className = "stars";
+    stars.setAttribute("role", "radiogroup");
+    stars.setAttribute("aria-label", label);
+    const word = document.createElement("span");
+    word.className = "rate-word";
+    for (let n = 1; n <= 5; n++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "star";
+      b.dataset.v = n;
+      b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", "false");
+      b.setAttribute("aria-label", n + (n === 1 ? " star" : " stars"));
+      b.innerHTML = starsSvg();
+      b.addEventListener("click", () => {
+        if (ratings[id] === n) delete ratings[id]; else ratings[id] = n;
+        paintRow(stars, word, ratings[id] || 0);
+        update();
+      });
+      stars.appendChild(b);
+    }
+    right.append(stars, word);
+    row.append(name, right);
+    list.appendChild(row);
+  });
+  wrap.append(h, list);
+  $("groups").appendChild(wrap);
+});
+function paintRow(stars, word, v) {
+  [...stars.children].forEach((b) => {
+    const n = Number(b.dataset.v);
+    b.classList.toggle("on", n <= v);
+    b.setAttribute("aria-checked", n === v ? "true" : "false");
+  });
+  word.textContent = WORDS[v] || "";
+}
+
+PURPOSES.forEach((p) => {
+  const l = document.createElement("label");
+  l.className = "chip";
+  l.innerHTML = '<input type="radio" name="purpose"><span></span>';
+  l.firstChild.value = p;
+  l.lastChild.textContent = p;
+  $("purposes").appendChild(l);
+});
+
+/* ---------- live summary ---------- */
+const mini = $("miniStars");
+for (let i = 0; i < 5; i++) mini.insertAdjacentHTML("beforeend", starsSvg());
+
+function average() {
+  const v = Object.values(ratings);
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+}
+function update() {
+  const avg = average();
+  const n = Object.keys(ratings).length;
+  $("overallVal").textContent = avg === null ? "–" : avg.toFixed(1);
+  [...mini.children].forEach((s, i) => s.classList.toggle("on", avg !== null && i < Math.round(avg)));
+  $("overallHint").textContent = n ? n + " of " + TOTAL_ITEMS + " items rated" : "Rate at least one item";
+  $("ck1").classList.toggle("done", n > 0);
+  $("ck2").classList.toggle("done", $("name").value.trim().length > 0);
+  $("ck3").classList.toggle("done", $("comments").value.trim().length > 0);
+  $("count").textContent = $("comments").value.length;
+  if (n) $("errRating").textContent = "";
+}
+["name", "comments"].forEach((id) => $(id).addEventListener("input", update));
+
+/* ---------- validation ---------- */
+function setErr(errId, msg, inputId) {
+  $(errId).textContent = msg || "";
+  if (inputId) $(inputId).classList.toggle("invalid", !!msg);
+}
+function validate() {
+  let first = null;
+  const bad = (el) => { if (!first) first = el; };
+
+  if (!Object.keys(ratings).length) { $("errRating").textContent = "Rate at least one item before submitting."; bad($("groups")); }
+  else $("errRating").textContent = "";
+
+  if (!$("name").value.trim()) { setErr("errName", "Enter your full name.", "name"); bad($("name")); } else setErr("errName", "", "name");
+
+  const em = $("email").value.trim();
+  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setErr("errEmail", "Enter a valid email address, or leave it blank.", "email"); bad($("email")); } else setErr("errEmail", "", "email");
+
+  const ci = $("cin").value, co = $("cout").value;
+  if (ci && co && co < ci) { setErr("errDates", "Check-out must be on or after check-in.", "cout"); bad($("cout")); } else setErr("errDates", "", "cout");
+
+  if (!$("comments").value.trim()) { setErr("errComments", "Tell us about your experience.", "comments"); bad($("comments")); } else setErr("errComments", "", "comments");
+
+  if (first) {
+    first.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (first.focus && first.tagName !== "DIV") first.focus({ preventScroll: true });
+  }
+  return !first;
+}
+
+/* ---------- submit ---------- */
+function showDone(refId) {
+  $("form").hidden = true;
+  $("done").hidden = false;
+  if (refId) {
+    $("refNo").textContent = refId.slice(0, 8).toUpperCase();
+    $("refBox").hidden = false;
+    $("doneMsg").textContent = "Your review has reached our management team. We read every one.";
+  } else {
+    $("refBox").hidden = true;
+    $("doneMsg").textContent = "Your review is saved on this device and will be sent as soon as you are back online. Please keep this page open.";
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+$("again").addEventListener("click", () => {
+  $("form").reset();
+  ratings = {};
+  document.querySelectorAll(".stars").forEach((s) => paintRow(s, s.nextElementSibling, 0));
+  update();
+  $("done").hidden = true;
+  $("form").hidden = false;
+  $("status").textContent = "";
+});
+
+$("form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("status").textContent = ""; $("status").className = "status";
+  if (!validate()) return;
+
+  if ($("website").value) { showDone("00000000"); return; }          // bot trap: pretend success
+  if (!db) { $("status").textContent = "This portal is not connected yet."; $("status").className = "status bad"; return; }
+
+  try {
+    const last = Number(localStorage.getItem("onomo-last-submit") || 0);
+    if (Date.now() - last < 30000) {
+      $("status").textContent = "Please wait a moment before sending another review.";
+      $("status").className = "status bad";
+      return;
+    }
+  } catch (e) { /* storage unavailable: skip the throttle */ }
+
+  const picked = document.querySelector('input[name="purpose"]:checked');
+  const data = {
+    name: $("name").value.trim(),
+    email: $("email").value.trim(),
+    room: $("room").value.trim(),
+    checkIn: $("cin").value,
+    checkOut: $("cout").value,
+    purpose: picked ? picked.value : "",
+    ratings: { ...ratings },
+    overall: Math.round(average() * 100) / 100,
+    comments: $("comments").value.trim(),
+    createdAt: serverTimestamp(),
+    status: "new",
+  };
+
+  const btn = $("submitBtn");
+  btn.disabled = true; btn.textContent = "Submitting…";
+  try {
+    const pending = addDoc(collection(db, "reviews"), data);
+    const res = await Promise.race([pending, new Promise((r) => setTimeout(() => r("timeout"), 15000))]);
+    try { localStorage.setItem("onomo-last-submit", String(Date.now())); } catch (e) {}
+    if (res === "timeout") { pending.catch(console.error); showDone(null); }
+    else showDone(res.id);
+  } catch (err) {
+    console.error(err);
+    $("status").textContent = "We could not send your review. Check your connection and try again.";
+    $("status").className = "status bad";
+  } finally {
+    btn.disabled = false; btn.textContent = "Submit review";
+  }
+});
+
+update();
+</script>
+</body>
+</html>

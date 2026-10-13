@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Guest Feedback Dashboard | AATC Onomo Allure Hotel</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f1b33%22/><text x=%2250%22 y=%2268%22 font-size=%2256%22 text-anchor=%22middle%22 fill=%22%23d9a32b%22 font-family=%22Georgia%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #0f1b33; --ink-2: #1b2c52; --gold: #d9a32b; --gold-deep: #8a6410; --gold-soft: #f7ecd0;
+    --paper: #f3f4f8; --card: #fff; --line: #dfe3ec; --muted: #586178;
+    --danger: #b3261e; --ok: #1d7a4b; --warn: #b26a00;
+    --serif: "Marcellus", Georgia, serif;
+    --sans: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 var(--sans); }
+  button, select, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .wrap { width: min(1240px, 100% - 40px); margin-inline: auto; }
+
+  /* Gate */
+  .gate { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--ink); }
+  .gate-card { background: #fff; border-radius: 16px; padding: 40px 36px; width: min(440px, 100%); text-align: center; }
+  .mark { width: 52px; height: 52px; border: 1.5px solid var(--gold); border-radius: 12px; display: grid; place-items: center; color: var(--gold); font: 1.6rem var(--serif); background: var(--ink); margin: 0 auto 18px; }
+  .gate-card h1 { font: 1.6rem var(--serif); font-weight: 400; margin: 0 0 6px; }
+  .gate-card p { color: var(--muted); margin: 0 0 22px; }
+  .gate-card .small { font-size: .85rem; margin-top: 18px; }
+  .gbtn { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #c3c9d8; border-radius: 9px; padding: 12px 22px; font-weight: 600; }
+  .gbtn:hover { background: #f1f3f8; }
+  .gbtn svg { width: 20px; height: 20px; }
+
+  /* Header */
+  header.top { background: var(--ink); color: #fff; }
+  .top .wrap { display: flex; align-items: center; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
+  .top .mark { margin: 0; width: 38px; height: 38px; font-size: 1.2rem; border-radius: 9px; }
+  .top .title { font: 1.1rem var(--serif); line-height: 1.2; }
+  .top .title span { display: block; font: .8rem var(--sans); color: #aab5d0; }
+  .spacer { flex: 1; }
+  .live { display: inline-flex; align-items: center; gap: 7px; font-size: .85rem; color: #c3cbe0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #7b86a3; }
+  .live.on .dot { background: #3ddc84; box-shadow: 0 0 0 0 rgba(61,220,132,.6); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(61,220,132,0); } 100% { box-shadow: 0 0 0 0 rgba(61,220,132,0); } }
+  .who { text-align: right; line-height: 1.25; font-size: .85rem; }
+  .who b { display: block; font-weight: 600; }
+  .role { display: inline-block; background: var(--gold); color: var(--ink); font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+  .linkbtn { background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 8px; padding: 7px 14px; }
+  .linkbtn:hover { background: rgba(255,255,255,.1); }
+
+  nav.tabs { background: #fff; border-bottom: 1px solid var(--line); }
+  nav.tabs .wrap { display: flex; gap: 4px; }
+  .tab { background: none; border: 0; border-bottom: 3px solid transparent; padding: 14px 18px; font-weight: 600; color: var(--muted); }
+  .tab[aria-selected=true] { color: var(--ink); border-bottom-color: var(--gold); }
+  .badge { background: var(--danger); color: #fff; border-radius: 999px; font-size: .72rem; padding: 1px 7px; margin-left: 6px; }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 18px 0; }
+  .fgroup { display: flex; flex-direction: column; gap: 3px; }
+  .fgroup label { font-size: .75rem; color: var(--muted); font-weight: 600; }
+  .filters select, .filters input { padding: 8px 10px; border: 1px solid #c3c9d8; border-radius: 8px; background: #fff; min-width: 140px; }
+  .filters input[type=search] { min-width: 220px; }
+
+  /* Buttons */
+  .btn { border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600; }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--ink-2); }
+  .btn-ghost { background: #fff; border: 1px solid #c3c9d8; }
+  .btn-ghost:hover { background: #eef0f6; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger.ghost { background: #fff; color: var(--danger); border: 1px solid #e4b5b1; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* KPI + cards */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  .kpi { padding: 18px 20px; }
+  .kpi .lbl { color: var(--muted); font-size: .85rem; font-weight: 600; }
+  .kpi .val { font: 2.3rem/1.1 var(--serif); margin-top: 4px; }
+  .kpi .val small { font-size: 1rem; color: var(--muted); }
+  .kpi .note { color: var(--muted); font-size: .8rem; margin-top: 2px; }
+  .kpi.alert .val { color: var(--danger); }
+
+  .charts { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; padding-bottom: 40px; }
+  .chart-card { padding: 18px 20px 14px; break-inside: avoid; }
+  .chart-card h2 { margin: 0 0 2px; font: 1.1rem var(--serif); font-weight: 400; }
+  .chart-card p { margin: 0 0 12px; color: var(--muted); font-size: .82rem; }
+  .c-6 { grid-column: span 6; } .c-8 { grid-column: span 8; } .c-4 { grid-column: span 4; } .c-12 { grid-column: span 12; }
+  .chart-box { position: relative; height: 290px; }
+  .chart-box.tall { height: 430px; }
+  .empty { color: var(--muted); text-align: center; padding: 40px 10px; }
+
+  /* Reviews table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .78rem; color: var(--muted); font-weight: 600; background: #fafbfd; white-space: nowrap; }
+  tbody tr:hover { background: #fafbfd; }
+  td.excerpt { max-width: 360px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+  .p-good { background: #dff3e8; color: #17613b; }
+  .p-mid { background: #fdf0d3; color: #8a5a00; }
+  .p-low { background: #fbe0de; color: #922018; }
+  .s-new { background: #dfe8fb; color: #1b3f8f; }
+  .s-reviewed { background: #eceef4; color: #44506b; }
+  .s-actioned { background: #dff3e8; color: #17613b; }
+  .more { text-align: center; padding: 14px; }
+  .count-line { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
+  .viewbtn { background: none; border: 0; color: var(--ink-2); font-weight: 600; text-decoration: underline; padding: 0; }
+  tr.fresh { animation: fresh 3s ease-out; }
+  @keyframes fresh { from { background: var(--gold-soft); } to { background: transparent; } }
+
+  /* Dialog */
+  dialog { border: 0; border-radius: 14px; padding: 0; width: min(680px, calc(100% - 28px)); max-height: calc(100% - 40px); box-shadow: 0 24px 70px rgba(15,27,51,.35); }
+  dialog::backdrop { background: rgba(15,27,51,.55); }
+  .dlg-head { display: flex; justify-content: space-between; gap: 12px; padding: 22px 26px 12px; align-items: flex-start; }
+  .dlg-head h2 { margin: 0; font: 1.4rem var(--serif); font-weight: 400; }
+  .dlg-head .meta { color: var(--muted); font-size: .86rem; }
+  .dlg-x { background: none; border: 0; font-size: 1.6rem; line-height: 1; padding: 0 4px; color: var(--muted); }
+  .dlg-body { padding: 4px 26px 22px; }
+  .dlg-foot { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 26px; background: #fafbfd; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .dlg-foot .left { margin-right: auto; }
+  .bars { display: grid; gap: 7px; margin: 10px 0 18px; }
+  .bar-row { display: grid; grid-template-columns: 190px 1fr 34px; gap: 10px; align-items: center; font-size: .88rem; }
+  .bar-track { background: #e8ebf3; height: 8px; border-radius: 99px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--gold); border-radius: 99px; }
+  .group-h { font-weight: 700; font-size: .85rem; margin: 12px 0 0; color: var(--ink-2); }
+  .comment { background: #f7f8fb; border-left: 4px solid var(--gold); padding: 12px 16px; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; margin: 8px 0 18px; }
+  .row2 { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; }
+  .dlg-body label { display: block; font-weight: 600; font-size: .82rem; margin-bottom: 4px; }
+  .dlg-body select, .dlg-body textarea, .dlg-body input { width: 100%; padding: 9px 11px; border: 1px solid #c3c9d8; border-radius: 8px; background: #fff; }
+  .dlg-body textarea { min-height: 76px; resize: vertical; }
+  .dlg-body .hint { color: var(--muted); font-size: .82rem; }
+  dialog.small { width: min(420px, calc(100% - 28px)); }
+  dialog.small .dlg-body { padding-top: 0; color: var(--muted); }
+
+  /* Team */
+  .team-add { display: grid; grid-template-columns: 2fr 1.5fr 1.2fr 1.2fr auto; gap: 10px; align-items: end; padding: 18px 20px; }
+  .team-add label { font-size: .78rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 3px; }
+  .team-add input, .team-add select, td select { padding: 8px 10px; border: 1px solid #c3c9d8; border-radius: 8px; width: 100%; background: #fff; }
+  .help { color: var(--muted); font-size: .85rem; padding: 0 20px 16px; margin: 0; }
+  .rolebox { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 16px; }
+  .rolebox div { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: .85rem; color: var(--muted); }
+  .rolebox b { display: block; color: var(--ink); margin-bottom: 2px; }
+
+  /* Toasts */
+  #toasts { position: fixed; right: 18px; bottom: 18px; display: grid; gap: 10px; z-index: 50; }
+  .toast { background: var(--ink); color: #fff; padding: 12px 16px; border-radius: 10px; border-left: 4px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,.25); max-width: 320px; cursor: pointer; font-size: .9rem; }
+  .toast b { display: block; }
+  .toast.err { border-left-color: #ff6b61; }
+
+  .print-only { display: none; }
+
+  @media (max-width: 980px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .c-6, .c-8, .c-4 { grid-column: span 12; }
+    .team-add { grid-template-columns: 1fr 1fr; }
+    .rolebox { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .bar-row { grid-template-columns: 120px 1fr 30px; }
+    .row2 { grid-template-columns: 1fr; }
+    .who { display: none; }
+  }
+  @media print {
+    body { background: #fff; }
+    header.top, nav.tabs, .filters, #toasts, .no-print, .more { display: none !important; }
+    .print-only { display: block; padding: 8px 0 14px; }
+    .print-only h1 { font: 1.6rem var(--serif); margin: 0; }
+    .card { box-shadow: none; }
+    .charts { grid-template-columns: repeat(2, 1fr); }
+    .c-6, .c-8, .c-4, .c-12 { grid-column: span 1; }
+    .c-12 { grid-column: span 2; }
+    .chart-box.tall { height: 360px; }
+    .kpi .val { font-size: 1.8rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ============ Sign-in / access gate ============ -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="mark" aria-hidden="true">A</div>
+    <h1>Guest feedback dashboard</h1>
+
+    <div id="gLoading"><p>Loading…</p></div>
+
+    <div id="gConfig" hidden>
+      <p>This dashboard is not connected yet. Add your Firebase settings to <code>firebase-config.js</code> (see SETUP.md).</p>
+    </div>
+
+    <div id="gSignin" hidden>
+      <p>Staff access only. Sign in with the Google account your administrator authorised.</p>
+      <button class="gbtn" id="signinBtn" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Sign in with Google
+      </button>
+      <p class="small" id="signinErr" style="color:var(--danger)"></p>
+    </div>
+
+    <div id="gDenied" hidden>
+      <p>You are signed in as <b id="deniedEmail"></b>, but this account does not have access.</p>
+      <p>Ask IT to add this email address to the team list.</p>
+      <button class="gbtn" id="deniedOut" type="button">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ App ============ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap">
+      <div class="mark" aria-hidden="true">A</div>
+      <div class="title">AATC Onomo Allure Hotel<span>Guest feedback dashboard</span></div>
+      <div class="spacer"></div>
+      <div class="live" id="live"><span class="dot"></span><span id="liveTxt">Connecting…</span></div>
+      <div class="who"><b id="meName"></b><span class="role" id="meRole"></span></div>
+      <button class="linkbtn" id="signoutBtn" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <div class="wrap" role="tablist">
+      <button class="tab" role="tab" data-view="overview" aria-selected="true">Overview</button>
+      <button class="tab" role="tab" data-view="reviews" aria-selected="false">Reviews <span class="badge" id="newBadge" hidden>0</span></button>
+      <button class="tab" role="tab" data-view="team" id="teamTab" aria-selected="false" hidden>Team access</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <!-- Filters (Overview + Reviews) -->
+    <div class="filters" id="filters">
+      <div class="fgroup"><label for="fPeriod">Period</label>
+        <select id="fPeriod">
+          <option value="7">Last 7 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="365">Last 12 months</option>
+          <option value="0">All time</option>
+        </select></div>
+      <div class="fgroup"><label for="fPurpose">Purpose of stay</label>
+        <select id="fPurpose"><option value="">All</option></select></div>
+      <div class="fgroup"><label for="fRating">Rating</label>
+        <select id="fRating">
+          <option value="">All ratings</option>
+          <option value="good">4 to 5 (satisfied)</option>
+          <option value="mid">3 to 3.9 (neutral)</option>
+          <option value="low">Under 3 (unhappy)</option>
+        </select></div>
+      <div class="fgroup"><label for="fStatus">Status</label>
+        <select id="fStatus">
+          <option value="">All</option>
+          <option value="new">New</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="actioned">Action taken</option>
+        </select></div>
+      <div class="fgroup"><label for="fSearch">Search</label>
+        <input type="search" id="fSearch" placeholder="Name, room or comment"></div>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost no-print" id="printBtn" type="button">Print report</button>
+      <button class="btn btn-ghost no-print" id="exportBtn" type="button">Export CSV</button>
+    </div>
+
+    <div class="print-only"><h1>AATC Onomo Allure Hotel: guest feedback report</h1><div id="printMeta"></div></div>
+
+    <!-- Overview -->
+    <section id="view-overview">
+      <div class="kpis">
+        <div class="card kpi"><div class="lbl">Reviews</div><div class="val" id="kTotal">0</div><div class="note" id="kTotalNote">in this period</div></div>
+        <div class="card kpi"><div class="lbl">Average rating</div><div class="val"><span id="kAvg">–</span><small> / 5</small></div><div class="note" id="kAvgNote"></div></div>
+        <div class="card kpi"><div class="lbl">Satisfied guests</div><div class="val" id="kSat">–</div><div class="note">rated 4 or higher</div></div>
+        <div class="card kpi" id="kLowCard"><div class="lbl">Low scores to follow up</div><div class="val" id="kLow">0</div><div class="note">under 3 and not yet actioned</div></div>
+      </div>
+
+      <div class="charts">
+        <div class="card chart-card c-8"><h2>Reviews and average rating over time</h2><p id="trendNote"></p><div class="chart-box"><canvas id="chTrend"></canvas></div></div>
+        <div class="card chart-card c-4"><h2>Overall rating spread</h2><p>Number of reviews by star rating</p><div class="chart-box"><canvas id="chDist"></canvas></div></div>
+        <div class="card chart-card c-12"><h2>Average rating by service and facility</h2><p>Where guests are happiest, and where to improve first</p><div class="chart-box tall"><canvas id="chCat"></canvas></div></div>
+        <div class="card chart-card c-6"><h2>Purpose of stay</h2><p>Share of reviews by type of guest</p><div class="chart-box"><canvas id="chPurpose"></canvas></div></div>
+        <div class="card chart-card c-6"><h2>Service vs facilities</h2><p>Average score of each group over time</p><div class="chart-box"><canvas id="chGroups"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="view-reviews" hidden>
+      <p class="count-line" id="listCount"></p>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Guest</th><th>Room</th><th>Purpose</th><th>Overall</th><th>Status</th><th>Comment</th><th><span class="sr-only" style="position:absolute;left:-9999px">Open</span></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="rowsEmpty" hidden>No reviews match these filters.</div>
+        <div class="more" id="moreWrap" hidden><button class="btn btn-ghost" id="moreBtn" type="button">Show more</button></div>
+      </div>
+      <div style="height:40px"></div>
+    </section>
+
+    <!-- Team -->
+    <section id="view-team" hidden>
+      <div class="rolebox">
+        <div><b>IT / Administrator</b>Sees everything, can delete reviews, and manages who has access.</div>
+        <div><b>Manager</b>Sees everything, can mark reviews as reviewed or actioned and add internal notes.</div>
+        <div><b>Viewer</b>Can see reviews and charts. Cannot change anything.</div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <form class="team-add" id="teamForm">
+          <div><label for="tEmail">Google email</label><input type="email" id="tEmail" required placeholder="name@example.com"></div>
+          <div><label for="tName">Full name</label><input type="text" id="tName" required maxlength="80"></div>
+          <div><label for="tDept">Department</label><input type="text" id="tDept" maxlength="60" placeholder="e.g. Reservations"></div>
+          <div><label for="tRole">Access level</label>
+            <select id="tRole"><option value="viewer">Viewer</option><option value="manager">Manager</option><option value="admin">IT / Administrator</option></select></div>
+          <button class="btn btn-primary" type="submit">Give access</button>
+        </form>
+        <p class="help">The person signs in at this page with that Google account. Access starts immediately.</p>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Access level</th><th>Status</th><th></th></tr></thead>
+          <tbody id="teamRows"></tbody>
+        </table>
+      </div>
+      <div style="height:40px"></div>
+    </section>
+  </div>
+</div>
+
+<!-- Review detail -->
+<dialog id="detail" aria-labelledby="dName">
+  <div class="dlg-head">
+    <div><h2 id="dName"></h2><div class="meta" id="dMeta"></div></div>
+    <div style="display:flex;gap:10px;align-items:center"><span class="pill" id="dScore"></span><button class="dlg-x" id="dClose" type="button" aria-label="Close">&times;</button></div>
+  </div>
+  <div class="dlg-body">
+    <div id="dBars"></div>
+    <div class="group-h">Guest comment</div>
+    <div class="comment" id="dComment"></div>
+    <div class="row2">
+      <div><label for="dStatus">Status</label>
+        <select id="dStatus"><option value="new">New</option><option value="reviewed">Reviewed</option><option value="actioned">Action taken</option></select></div>
+      <div><label for="dNote">Internal note <span class="hint">(never shown to guests)</span></label>
+        <textarea id="dNote" maxlength="1000"></textarea></div>
+    </div>
+    <p class="hint" id="dAudit" style="margin:10px 0 0"></p>
+  </div>
+  <div class="dlg-foot">
+    <button class="btn btn-danger ghost left" id="dDelete" type="button" hidden>Delete review</button>
+    <button class="btn btn-ghost" id="dCancel" type="button">Close</button>
+    <button class="btn btn-primary" id="dSave" type="button" hidden>Save changes</button>
+  </div>
+</dialog>
+
+<!-- Confirm -->
+<dialog id="confirmDlg" class="small" aria-labelledby="cTitle">
+  <div class="dlg-head"><h2 id="cTitle"></h2></div>
+  <div class="dlg-body"><p id="cMsg" style="margin:0"></p></div>
+  <div class="dlg-foot">
+    <button class="btn btn-ghost" id="cNo" type="button">Cancel</button>
+    <button class="btn btn-danger" id="cYes" type="button">Confirm</button>
+  </div>
+</dialog>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script type="module">
+import { firebaseConfig, isConfigured } from "./firebase-config.js";
+import { GROUPS, LABELS, GROUP_OF, PURPOSES, ROLES, STATUS_LABELS } from "./shared.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = (id) => document.getElementById(id);
+const PAGE = 50;
+
+/* ---------- tiny DOM helper (text only, never raw HTML) ---------- */
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) el.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+
+/* ---------- state ---------- */
+const state = { me: null, all: [], filtered: [], shown: PAGE, current: null, firstLoad: true, freshIds: new Set() };
+let auth, db, unsubReviews = null, unsubStaff = null;
+const charts = {};
+
+function showGate(which) {
+  $("app").hidden = which === "app";
+  $("gate").hidden = which === "app";
+  ["gLoading", "gConfig", "gSignin", "gDenied"].forEach((id) => ($(id).hidden = id !== which));
+}
+const canManage = () => state.me && (state.me.role === "admin" || state.me.role === "manager");
+const isAdmin = () => state.me && state.me.role === "admin";
+
+/* ---------- auth ---------- */
+if (!isConfigured) {
+  showGate("gConfig");
+} else {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  showGate("gLoading");
+
+  $("signinBtn").addEventListener("click", async () => {
+    $("signinErr").textContent = "";
+    try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+    catch (e) {
+      if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request")
+        $("signinErr").textContent = e.code === "auth/unauthorized-domain"
+          ? "This website address is not authorised in Firebase (see SETUP.md, step 5)."
+          : "Sign-in failed. Please try again.";
+    }
+  });
+  $("deniedOut").addEventListener("click", () => signOut(auth));
+  $("signoutBtn").addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, async (user) => {
+    stopListeners();
+    state.me = null; state.firstLoad = true;
+    if (!user) { showGate("gSignin"); return; }
+    const email = (user.email || "").toLowerCase();
+    try {
+      const snap = await getDoc(doc(db, "staff", email));
+      if (!snap.exists() || snap.data().active === false || !user.emailVerified) {
+        $("deniedEmail").textContent = email;
+        showGate("gDenied");
+        return;
+      }
+      state.me = { email, ...snap.data() };
+      startApp();
+    } catch (e) {
+      console.error(e);
+      $("deniedEmail").textContent = email;
+      showGate("gDenied");
+    }
+  });
+}
+
+function stopListeners() {
+  if (unsubReviews) { unsubReviews(); unsubReviews = null; }
+  if (unsubStaff) { unsubStaff(); unsubStaff = null; }
+}
+
+/* ---------- start ---------- */
+function startApp() {
+  $("meName").textContent = state.me.name || state.me.email;
+  $("meRole").textContent = ROLES[state.me.role] || state.me.role;
+  $("teamTab").hidden = !isAdmin();
+  showGate("app");
+  switchView("overview");
+
+  const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(2000));
+  unsubReviews = onSnapshot(q, (snap) => {
+    if (!state.firstLoad) {
+      snap.docChanges().forEach((ch) => {
+        if (ch.type === "added") {
+          const r = normalize(ch.doc);
+          state.freshIds.add(r.id);
+          toast("New review from " + r.name, r.overall.toFixed(1) + " / 5. Click to open.", () => openDetail(r.id));
+        }
+      });
+    }
+    state.all = snap.docs.map(normalize);
+    state.firstLoad = false;
+    setLive(!snap.metadata.fromCache);
+    refresh();
+  }, (err) => {
+    console.error(err);
+    setLive(false);
+    if (err.code === "permission-denied") {
+      stopListeners();
+      $("deniedEmail").textContent = state.me ? state.me.email : "";
+      showGate("gDenied");
+    }
+  });
+
+  if (isAdmin()) {
+    unsubStaff = onSnapshot(collection(db, "staff"), (snap) => renderTeam(snap.docs.map((d) => ({ email: d.id, ...d.data() }))),
+      (err) => console.error(err));
+  }
+}
+
+function normalize(d) {
+  const x = d.data();
+  return {
+    id: d.id,
+    name: x.name || "(no name)",
+    email: x.email || "",
+    room: x.room || "",
+    checkIn: x.checkIn || "",
+    checkOut: x.checkOut || "",
+    purpose: x.purpose || "",
+    ratings: x.ratings || {},
+    overall: Number(x.overall) || 0,
+    comments: x.comments || "",
+    status: x.status || "new",
+    internalNote: x.internalNote || "",
+    updatedBy: x.updatedBy || "",
+    updatedAt: x.updatedAt && x.updatedAt.toDate ? x.updatedAt.toDate() : null,
+    date: x.createdAt && x.createdAt.toDate ? x.createdAt.toDate() : new Date(),
+  };
+}
+
+function setLive(on) {
+  $("live").classList.toggle("on", on);
+  $("liveTxt").textContent = on ? "Live" : "Reconnecting…";
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => switchView(t.dataset.view)));
+function switchView(v) {
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === v)));
+  ["overview", "reviews", "team"].forEach((n) => ($("view-" + n).hidden = n !== v));
+  $("filters").hidden = v === "team";
+  if (v === "overview") refresh();
+}
+const currentView = () => (document.querySelector('.tab[aria-selected="true"]') || {}).dataset?.view;
+
+/* ---------- filters ---------- */
+PURPOSES.forEach((p) => $("fPurpose").append(h("option", { value: p }, p)));
+["fPeriod", "fPurpose", "fRating", "fStatus"].forEach((id) => $(id).addEventListener("change", () => { state.shown = PAGE; refresh(); }));
+let searchTimer;
+$("fSearch").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.shown = PAGE; refresh(); }, 200); });
+
+function applyFilters() {
+  const days = Number($("fPeriod").value);
+  const purpose = $("fPurpose").value, rating = $("fRating").value, status = $("fStatus").value;
+  const term = $("fSearch").value.trim().toLowerCase();
+  const since = days ? Date.now() - days * 86400000 : 0;
+  return state.all.filter((r) => {
+    if (since && r.date.getTime() < since) return false;
+    if (purpose && r.purpose !== purpose) return false;
+    if (status && r.status !== status) return false;
+    if (rating === "good" && r.overall < 4) return false;
+    if (rating === "mid" && !(r.overall >= 3 && r.overall < 4)) return false;
+    if (rating === "low" && r.overall >= 3) return false;
+    if (term && !(r.name + " " + r.room + " " + r.comments + " " + r.email).toLowerCase().includes(term)) return false;
+    return true;
+  });
+}
+
+function refresh() {
+  state.filtered = applyFilters();
+  const newCount = state.all.filter((r) => r.status === "new").length;
+  $("newBadge").textContent = newCount; $("newBadge").hidden = !newCount;
+  renderKpis(); renderCharts(); renderRows();
+  const pSel = $("fPeriod").selectedOptions[0].textContent;
+  $("printMeta").textContent = pSel + ". Generated " + new Date().toLocaleString("en-GB") + " by " + (state.me ? state.me.name || state.me.email : "") + ".";
+  if (state.current && $("detail").open && !$("dSave").dataset.dirty) fillDetail(state.current.id);
+}
+
+/* ---------- helpers ---------- */
+const avg = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const band = (v) => (v >= 4 ? "good" : v >= 3 ? "mid" : "low");
+const fmtDate = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const fmtDateTime = (d) => fmtDate(d) + ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+/* ---------- KPIs ---------- */
+function renderKpis() {
+  const f = state.filtered;
+  $("kTotal").textContent = f.length;
+  const a = avg(f.map((r) => r.overall));
+  $("kAvg").textContent = a === null ? "–" : a.toFixed(2);
+  $("kAvgNote").textContent = f.length ? "across all rated items" : "no reviews in this view";
+  $("kSat").textContent = f.length ? Math.round((f.filter((r) => r.overall >= 4).length / f.length) * 100) + "%" : "–";
+  const low = f.filter((r) => r.overall < 3 && r.status !== "actioned").length;
+  $("kLow").textContent = low;
+  $("kLowCard").classList.toggle("alert", low > 0);
+}
+
+/* ---------- charts ---------- */
+const NAVY = "#1b2c52", GOLD = "#d9a32b", MUTED = "#586178";
+if (window.Chart) {
+  Chart.defaults.font.family = '"Figtree", system-ui, sans-serif';
+  Chart.defaults.color = MUTED;
+}
+function upsert(key, canvasId, cfg) {
+  if (!window.Chart) return;
+  if (charts[key]) {
+    charts[key].data = cfg.data;
+    charts[key].options = cfg.options;
+    charts[key].update("none");
+  } else {
+    charts[key] = new Chart($(canvasId), cfg);
+  }
+}
+function startOfDay(d) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
+function bucketStart(d, weekly) {
+  const x = startOfDay(d);
+  if (weekly) x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); // Monday
+  return x;
+}
+function buckets(list) {
+  if (!list.length) return { keys: [], weekly: false };
+  const times = list.map((r) => r.date.getTime());
+  const min = new Date(Math.min(...times)), max = new Date(Math.max(Date.now(), ...times));
+  const weekly = (max - min) / 86400000 > 60;
+  const keys = [];
+  for (let c = bucketStart(min, weekly); c <= max; c = new Date(c.getFullYear(), c.getMonth(), c.getDate() + (weekly ? 7 : 1))) keys.push(c.getTime());
+  return { keys, weekly };
+}
+
+function renderCharts() {
+  const f = state.filtered;
+  const none = !f.length;
+
+  /* Trend: count (bars) + average (line) */
+  const { keys, weekly } = buckets(f);
+  const byKey = new Map(keys.map((k) => [k, []]));
+  f.forEach((r) => { const k = bucketStart(r.date, weekly).getTime(); if (byKey.has(k)) byKey.get(k).push(r); });
+  const labels = keys.map((k) => new Date(k).toLocaleDateString("en-GB", { day: "numeric", month: "short" }));
+  $("trendNote").textContent = weekly ? "Grouped by week (starting Monday)" : "Grouped by day";
+  upsert("trend", "chTrend", {
+    data: {
+      labels,
+      datasets: [
+        { type: "line", label: "Average rating", data: keys.map((k) => avg(byKey.get(k).map((r) => r.overall))), yAxisID: "y1", borderColor: GOLD, backgroundColor: GOLD, tension: .3, spanGaps: true, pointRadius: 3, order: 1 },
+        { type: "bar", label: "Reviews", data: keys.map((k) => byKey.get(k).length), yAxisID: "y", backgroundColor: "rgba(27,44,82,.85)", borderRadius: 4, order: 2 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: "Reviews" } },
+        y1: { position: "right", min: 0, max: 5, grid: { drawOnChartArea: false }, title: { display: true, text: "Average rating" } },
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
+      },
+      plugins: { legend: { position: "bottom" } },
+    },
+  });
+
+  /* Distribution */
+  const dist = [0, 0, 0, 0, 0];
+  f.forEach((r) => { dist[Math.min(5, Math.max(1, Math.round(r.overall))) - 1]++; });
+  upsert("dist", "chDist", {
+    type: "bar",
+    data: { labels: ["1 star", "2 stars", "3 stars", "4 stars", "5 stars"], datasets: [{ data: dist, backgroundColor: ["#c8473d", "#e0803d", "#e3b73e", "#7fb36a", "#2f8f5b"], borderRadius: 5 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } },
+  });
+
+  /* By category */
+  const rows = [];
+  GROUPS.forEach((g) => g.items.forEach(([id, label]) => {
+    const vals = f.map((r) => r.ratings[id]).filter((v) => typeof v === "number");
+    rows.push({ id, label, group: g.id, avg: avg(vals), n: vals.length });
+  }));
+  upsert("cat", "chCat", {
+    type: "bar",
+    data: {
+      labels: rows.map((r) => r.label),
+      datasets: [{ data: rows.map((r) => (r.avg === null ? 0 : Math.round(r.avg * 100) / 100)), backgroundColor: rows.map((r) => (r.group === "service" ? NAVY : GOLD)), borderRadius: 4 }],
+    },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      scales: { x: { min: 0, max: 5, title: { display: true, text: "Average rating (navy = service, gold = facilities)" } }, y: { grid: { display: false } } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => (rows[c.dataIndex].n ? c.parsed.x.toFixed(2) + " / 5 from " + rows[c.dataIndex].n + " ratings" : "No ratings yet") } } },
+    },
+  });
+
+  /* Purpose */
+  const counts = {};
+  f.forEach((r) => { const p = r.purpose || "Not stated"; counts[p] = (counts[p] || 0) + 1; });
+  const pl = Object.keys(counts);
+  upsert("purpose", "chPurpose", {
+    type: "doughnut",
+    data: { labels: pl, datasets: [{ data: pl.map((k) => counts[k]), backgroundColor: ["#1b2c52", "#d9a32b", "#4f7cac", "#8fb996", "#b8bfd0"], borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "58%", plugins: { legend: { position: "right" } } },
+  });
+
+  /* Service vs facilities over time */
+  const gAvg = (list, gid) => avg(list.flatMap((r) => Object.entries(r.ratings).filter(([k, v]) => GROUP_OF[k] === gid && typeof v === "number").map(([, v]) => v)));
+  upsert("groups", "chGroups", {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        { label: "Service", data: keys.map((k) => gAvg(byKey.get(k), "service")), borderColor: NAVY, backgroundColor: NAVY, tension: .3, spanGaps: true, pointRadius: 3 },
+        { label: "Facilities", data: keys.map((k) => gAvg(byKey.get(k), "facility")), borderColor: GOLD, backgroundColor: GOLD, tension: .3, spanGaps: true, pointRadius: 3 },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false }, scales: { y: { min: 0, max: 5 }, x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } } }, plugins: { legend: { position: "bottom" } } },
+  });
+}
+
+/* ---------- reviews table ---------- */
+function scorePill(v) { return h("span", { class: "pill p-" + band(v) }, v.toFixed(1)); }
+function statusPill(s) { return h("span", { class: "pill s-" + s }, STATUS_LABELS[s] || s); }
+
+function renderRows() {
+  const f = state.filtered;
+  const body = $("rows");
+  body.textContent = "";
+  $("listCount").textContent = f.length + (f.length === 1 ? " review" : " reviews") + " match the current filters";
+  $("rowsEmpty").hidden = f.length > 0;
+  f.slice(0, state.shown).forEach((r) => {
+    const tr = h("tr", { class: state.freshIds.has(r.id) ? "fresh" : "" },
+      h("td", null, fmtDate(r.date)),
+      h("td", null, h("b", null, r.name)),
+      h("td", null, r.room || "–"),
+      h("td", null, r.purpose || "–"),
+      h("td", null, scorePill(r.overall)),
+      h("td", null, statusPill(r.status)),
+      h("td", { class: "excerpt" }, r.comments),
+      h("td", null, h("button", { class: "viewbtn", type: "button", onclick: () => openDetail(r.id) }, "Open"))
+    );
+    body.append(tr);
+  });
+  state.freshIds.clear();
+  $("moreWrap").hidden = f.length <= state.shown;
+}
+$("moreBtn").addEventListener("click", () => { state.shown += PAGE; renderRows(); });
+
+/* ---------- detail dialog ---------- */
+function openDetail(id) {
+  const r = state.all.find((x) => x.id === id);
+  if (!r) return;
+  state.current = r;
+  $("dSave").removeAttribute("data-dirty");
+  fillDetail(id);
+  if (!$("detail").open) $("detail").showModal();
+}
+function fillDetail(id) {
+  const r = state.all.find((x) => x.id === id);
+  if (!r) return;
+  state.current = r;
+  $("dName").textContent = r.name;
+  const meta = [fmtDateTime(r.date)];
+  if (r.purpose) meta.push(r.purpose + " stay");
+  if (r.room) meta.push("Room " + r.room);
+  if (r.checkIn || r.checkOut) meta.push((r.checkIn || "?") + " to " + (r.checkOut || "?"));
+  $("dMeta").textContent = meta.join("  |  ");
+  const sp = $("dScore"); sp.textContent = r.overall.toFixed(1) + " / 5"; sp.className = "pill p-" + band(r.overall);
+
+  const bars = $("dBars"); bars.textContent = "";
+  GROUPS.forEach((g) => {
+    const items = g.items.filter(([k]) => typeof r.ratings[k] === "number");
+    if (!items.length) return;
+    bars.append(h("div", { class: "group-h" }, g.title));
+    bars.append(h("div", { class: "bars" }, items.map(([k, label]) =>
+      h("div", { class: "bar-row" }, h("span", null, label),
+        h("div", { class: "bar-track" }, h("div", { class: "bar-fill", style: "width:" + (r.ratings[k] / 5) * 100 + "%" })),
+        h("b", null, r.ratings[k] + "/5")))));
+  });
+
+  const cm = $("dComment"); cm.textContent = r.comments;
+  $("dStatus").value = r.status;
+  $("dNote").value = r.internalNote;
+  const edit = canManage();
+  $("dStatus").disabled = !edit; $("dNote").disabled = !edit;
+  $("dSave").hidden = !edit; $("dDelete").hidden = !isAdmin();
+  const aud = [];
+  if (r.email) aud.push("Guest email: " + r.email);
+  if (r.updatedBy && r.updatedAt) aud.push("Last updated by " + r.updatedBy + " on " + fmtDateTime(r.updatedAt));
+  $("dAudit").textContent = aud.join("  |  ");
+}
+["dStatus", "dNote"].forEach((id) => { $(id).addEventListener("input", () => $("dSave").setAttribute("data-dirty", "1")); $(id).addEventListener("change", () => $("dSave").setAttribute("data-dirty", "1")); });
+$("dClose").addEventListener("click", () => $("detail").close());
+$("dCancel").addEventListener("click", () => $("detail").close());
+$("dSave").addEventListener("click", async () => {
+  const r = state.current;
+  if (!r || !canManage()) return;
+  $("dSave").disabled = true;
+  try {
+    await updateDoc(doc(db, "reviews", r.id), {
+      status: $("dStatus").value,
+      internalNote: $("dNote").value.trim(),
+      updatedAt: serverTimestamp(),
+      updatedBy: state.me.email,
+    });
+    $("dSave").removeAttribute("data-dirty");
+    $("detail").close();
+    toast("Saved", "Review updated.");
+  } catch (e) {
+    console.error(e);
+    toast("Could not save", "You may not have permission, or the connection dropped.", null, true);
+  } finally { $("dSave").disabled = false; }
+});
+$("dDelete").addEventListener("click", async () => {
+  const r = state.current;
+  if (!r || !isAdmin()) return;
+  const ok = await confirmBox("Delete this review?", "The review from " + r.name + " will be removed for everyone. This cannot be undone.", "Delete review");
+  if (!ok) return;
+  try { await deleteDoc(doc(db, "reviews", r.id)); $("detail").close(); toast("Deleted", "The review was removed."); }
+  catch (e) { console.error(e); toast("Could not delete", "Check your permissions.", null, true); }
+});
+
+/* ---------- confirm dialog ---------- */
+function confirmBox(title, msg, yes) {
+  return new Promise((resolve) => {
+    $("cTitle").textContent = title; $("cMsg").textContent = msg; $("cYes").textContent = yes || "Confirm";
+    const d = $("confirmDlg");
+    const done = (v) => { d.close(); $("cYes").onclick = null; $("cNo").onclick = null; resolve(v); };
+    $("cYes").onclick = () => done(true);
+    $("cNo").onclick = () => done(false);
+    d.addEventListener("cancel", () => resolve(false), { once: true });
+    d.showModal();
+  });
+}
+
+/* ---------- team (admin only) ---------- */
+function renderTeam(list) {
+  const body = $("teamRows"); body.textContent = "";
+  list.sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
+  list.forEach((s) => {
+    const me = s.email === state.me.email;
+    const sel = h("select", { "aria-label": "Access level for " + s.email, disabled: me, onchange: async (e) => {
+      try { await updateDoc(doc(db, "staff", s.email), { role: e.target.value }); toast("Updated", s.email + " is now " + ROLES[e.target.value] + "."); }
+      catch (err) { console.error(err); toast("Could not update", "Check your permissions.", null, true); }
+    } }, Object.entries(ROLES).map(([k, v]) => h("option", { value: k, selected: s.role === k }, v)));
+    const active = s.active !== false;
+    body.append(h("tr", null,
+      h("td", null, h("b", null, s.name || "(no name)"), me ? " (you)" : ""),
+      h("td", null, s.email),
+      h("td", null, s.department || "–"),
+      h("td", null, sel),
+      h("td", null, h("span", { class: "pill " + (active ? "p-good" : "p-low") }, active ? "Active" : "Suspended")),
+      h("td", null, me ? "" : [
+        h("button", { class: "btn btn-ghost", type: "button", style: "margin-right:6px", onclick: async () => {
+          try { await updateDoc(doc(db, "staff", s.email), { active: !active }); } catch (e) { console.error(e); toast("Could not update", "Check your permissions.", null, true); }
+        } }, active ? "Suspend" : "Restore"),
+        h("button", { class: "btn btn-danger ghost", type: "button", onclick: async () => {
+          if (await confirmBox("Remove access?", s.email + " will no longer be able to open this dashboard.", "Remove")) {
+            try { await deleteDoc(doc(db, "staff", s.email)); } catch (e) { console.error(e); toast("Could not remove", "Check your permissions.", null, true); }
+          }
+        } }, "Remove"),
+      ])));
+  });
+}
+$("teamForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!isAdmin()) return;
+  const email = $("tEmail").value.trim().toLowerCase();
+  if (!email) return;
+  try {
+    await setDoc(doc(db, "staff", email), {
+      name: $("tName").value.trim(), department: $("tDept").value.trim(), role: $("tRole").value,
+      active: true, addedBy: state.me.email, addedAt: serverTimestamp(),
+    });
+    $("teamForm").reset();
+    toast("Access granted", email + " can now sign in.");
+  } catch (err) { console.error(err); toast("Could not add", "Check your permissions.", null, true); }
+});
+
+/* ---------- export / print ---------- */
+function csvCell(v) {
+  v = String(v == null ? "" : v);
+  if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+  return '"' + v.replace(/"/g, '""') + '"';
+}
+$("exportBtn").addEventListener("click", () => {
+  const ids = Object.keys(LABELS);
+  const head = ["Submitted", "Name", "Email", "Room", "Check-in", "Check-out", "Purpose", "Overall", "Status"].concat(ids.map((k) => LABELS[k]), ["Comment", "Internal note"]);
+  const rows = state.filtered.map((r) => [r.date.toISOString(), r.name, r.email, r.room, r.checkIn, r.checkOut, r.purpose, r.overall.toFixed(2), STATUS_LABELS[r.status] || r.status]
+    .concat(ids.map((k) => (r.ratings[k] != null ? r.ratings[k] : "")), [r.comments, r.internalNote]));
+  const csv = [head].concat(rows).map((r) => r.map(csvCell).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "onomo-allure-feedback-" + new Date().toISOString().slice(0, 10) + ".csv";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$("printBtn").addEventListener("click", () => {
+  if (currentView() !== "overview") switchView("overview");
+  setTimeout(() => window.print(), 150);
+});
+
+/* ---------- toasts ---------- */
+function toast(title, msg, onclick, isErr) {
+  const t = h("div", { class: "toast" + (isErr ? " err" : ""), role: "status" }, h("b", null, title), msg || "");
+  t.addEventListener("click", () => { t.remove(); if (onclick) onclick(); });
+  $("toasts").append(t);
+  setTimeout(() => t.remove(), 7000);
+}
+</script>
+</body>
+</html>
