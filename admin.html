@@ -180,6 +180,9 @@
   .imgbox b { display: block; font-size: .88rem; }
   .imgbox .btns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
   .imgbox .btn { padding: 7px 12px; font-size: .85rem; }
+  .filebtn { position: relative; display: inline-block; cursor: pointer; border-radius: 8px; }
+  .filebtn:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .vh { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
   .pv-wrap { padding: 18px 20px; position: sticky; top: 14px; }
   .pv-wrap h2 { margin: 0 0 2px; font: 1.1rem var(--serif); font-weight: 400; }
   .pv { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--paper); margin-top: 10px; font-size: 12px; }
@@ -387,15 +390,14 @@
             <div class="imgbox">
               <div class="thumb" id="imLogoThumb">No logo</div>
               <div><b>Logo</b><span class="hint">PNG with a transparent background works best. Shown top left.</span>
-                <div class="btns"><button class="btn btn-ghost" id="imLogoPick" type="button">Choose logo</button><button class="btn btn-ghost" id="imLogoDel" type="button">Remove</button></div>
-                <input type="file" id="imLogoFile" accept="image/*" hidden></div>
+                <div class="btns"><label class="btn btn-ghost filebtn">Choose logo<input type="file" id="imLogoFile" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/*" class="vh"></label><button class="btn btn-ghost" id="imLogoDel" type="button">Remove</button></div></div>
             </div>
             <div class="imgbox">
               <div class="thumb cover" id="imHeroThumb">No picture</div>
               <div><b>Home picture</b><span class="hint">Wide landscape photo, at least 1600 pixels across. A tinted layer is added so the headline stays readable.</span>
-                <div class="btns"><button class="btn btn-ghost" id="imHeroPick" type="button">Choose picture</button><button class="btn btn-ghost" id="imHeroDel" type="button">Remove</button></div>
-                <input type="file" id="imHeroFile" accept="image/*" hidden></div>
+                <div class="btns"><label class="btn btn-ghost filebtn">Choose picture<input type="file" id="imHeroFile" accept="image/png,image/jpeg,image/webp,image/gif,image/*" class="vh"></label><button class="btn btn-ghost" id="imHeroDel" type="button">Remove</button></div></div>
             </div>
+            <div class="hint" id="imInfo" role="status" style="margin-bottom:6px"></div>
             <div class="msg-err" id="imErr" role="alert"></div>
             <div class="save-row"><button class="btn btn-primary" id="imSave" type="button">Save images</button><span class="hint" id="imDirty"></span></div>
             <div class="meta-line" id="imMeta"></div>
@@ -1119,16 +1121,15 @@ async function pickImage(fileInputId, key, opts) {
   try {
     site.media[key] = await shrink(f, opts);
     site.imgDirty = true; drawThumbs(); updatePreview();
+    $("imInfo").textContent = (key === "logo" ? "Logo" : "Picture") + " ready (" + Math.round(site.media[key].length / 1024) + " KB after shrinking). Click Save images to publish it to the guest page.";
   } catch (e) {
     $("imErr").textContent = e.message === "toobig" ? "That image is too detailed to shrink enough. Try a simpler or smaller one." : "That file could not be read as an image.";
   }
 }
-$("imLogoPick").addEventListener("click", () => $("imLogoFile").click());
-$("imHeroPick").addEventListener("click", () => $("imHeroFile").click());
 $("imLogoFile").addEventListener("change", () => pickImage("imLogoFile", "logo", { maxDim: 420, type: "image/png", quality: 1, maxChars: 190000 }));
 $("imHeroFile").addEventListener("change", () => pickImage("imHeroFile", "heroImage", { maxDim: 1800, type: "image/jpeg", quality: 0.82, maxChars: 640000 }));
-$("imLogoDel").addEventListener("click", () => { site.media.logo = ""; site.imgDirty = true; drawThumbs(); updatePreview(); });
-$("imHeroDel").addEventListener("click", () => { site.media.heroImage = ""; site.imgDirty = true; drawThumbs(); updatePreview(); });
+$("imLogoDel").addEventListener("click", () => { site.media.logo = ""; site.imgDirty = true; drawThumbs(); updatePreview(); $("imInfo").textContent = "Logo removed. Click Save images to apply."; });
+$("imHeroDel").addEventListener("click", () => { site.media.heroImage = ""; site.imgDirty = true; drawThumbs(); updatePreview(); $("imInfo").textContent = "Picture removed. Click Save images to apply."; });
 
 /* saving */
 async function saveDoc(name, data, errId, btnId, metaId) {
@@ -1136,11 +1137,14 @@ async function saveDoc(name, data, errId, btnId, metaId) {
   try {
     await setDoc(doc(db, "settings", name), { ...data, updatedAt: serverTimestamp(), updatedBy: state.me.email });
     $(metaId).textContent = "Last saved by " + state.me.email + " on " + fmtDateTime(new Date()) + ".";
-    toast("Saved", "The guest page now uses these settings.");
+    $(errId).textContent = "";
+    toast("Saved", "The guest page now uses these settings. Refresh it to see the change.");
     return true;
   } catch (e) {
     console.error(e);
-    $(errId).textContent = "Could not save. You may not have permission, or the connection dropped.";
+    $(errId).textContent = e && e.code === "permission-denied"
+      ? "The database refused this change. In Firebase open Firestore, Rules, paste the latest firestore.rules and click Publish, then try again. (If it still fails, sign out and back in.)"
+      : "Could not save (" + ((e && (e.code || e.message)) || "unknown error") + "). Check your connection and try again.";
     return false;
   } finally { btn.disabled = false; }
 }
@@ -1157,7 +1161,7 @@ $("stSave").addEventListener("click", async () => {
 $("imSave").addEventListener("click", async () => {
   if (!isAdmin()) return;
   $("imErr").textContent = "";
-  if (await saveDoc("media", { logo: site.media.logo, heroImage: site.media.heroImage }, "imErr", "imSave", "imMeta")) { site.imgDirty = false; drawThumbs(); }
+  if (await saveDoc("media", { logo: site.media.logo, heroImage: site.media.heroImage }, "imErr", "imSave", "imMeta")) { site.imgDirty = false; drawThumbs(); $("imInfo").textContent = "Saved. Open the guest page and refresh it to see the logo and picture."; }
 });
 $("ctSave").addEventListener("click", async () => {
   if (!canManage()) return;
