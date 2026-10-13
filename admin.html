@@ -155,6 +155,54 @@
   .toast b { display: block; }
   .toast.err { border-left-color: #ff6b61; }
 
+  /* Site settings */
+  .site-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, 1fr); gap: 18px; align-items: start; padding-bottom: 40px; }
+  .site-card { padding: 22px 24px; margin-bottom: 14px; }
+  .site-card h2 { margin: 0 0 2px; font: 1.2rem var(--serif); font-weight: 400; }
+  .site-card .lead { margin: 0 0 16px; color: var(--muted); font-size: .88rem; }
+  .sf { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+  .sf label { font-weight: 600; font-size: .85rem; }
+  .sf input[type=text], .sf input[type=email], .sf textarea { padding: 10px 12px; border: 1px solid #c3c9d8; border-radius: 8px; width: 100%; background: #fff; }
+  .sf textarea { min-height: 72px; resize: vertical; }
+  .sf .hint, .hint { color: var(--muted); font-size: .8rem; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .colors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 8px; }
+  .cpick { display: flex; gap: 8px; align-items: center; }
+  .cpick input[type=color] { width: 44px; height: 40px; padding: 2px; border: 1px solid #c3c9d8; border-radius: 8px; background: #fff; cursor: pointer; }
+  .cpick input[type=text] { width: 100px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .save-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+  .msg-err { color: var(--danger); font-size: .85rem; }
+  .meta-line { color: var(--muted); font-size: .8rem; margin-top: 10px; }
+  .imgbox { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; border: 1px dashed #c3c9d8; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .thumb { height: 90px; border-radius: 8px; background: repeating-conic-gradient(#e8ebf3 0% 25%, #f7f8fb 0% 50%) 50% / 16px 16px; display: grid; place-items: center; overflow: hidden; color: var(--muted); font-size: .78rem; text-align: center; }
+  .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .thumb.cover img { width: 100%; height: 100%; object-fit: cover; }
+  .imgbox b { display: block; font-size: .88rem; }
+  .imgbox .btns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .imgbox .btn { padding: 7px 12px; font-size: .85rem; }
+  .pv-wrap { padding: 18px 20px; position: sticky; top: 14px; }
+  .pv-wrap h2 { margin: 0 0 2px; font: 1.1rem var(--serif); font-weight: 400; }
+  .pv { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--paper); margin-top: 10px; font-size: 12px; }
+  .pv-top { background: var(--ink); color: #fff; display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+  .pv-mark { width: 26px; height: 26px; border: 1px solid var(--gold); border-radius: 6px; display: grid; place-items: center; color: var(--gold); font: 14px var(--serif); overflow: hidden; flex: none; }
+  .pv-mark.has-logo { width: auto; max-width: 90px; border: 0; border-radius: 0; }
+  .pv-mark img { height: 26px; width: auto; max-width: 90px; object-fit: contain; display: block; }
+  .pv-top b { font: 13px var(--serif); font-weight: 400; display: block; line-height: 1.1; }
+  .pv-top small { color: #aab5d0; font-size: 10px; }
+  .pv-hero { background-color: var(--ink); background-size: cover; background-position: center; color: #fff; padding: 20px 14px 36px; }
+  .pv-hero small { color: var(--gold); display: block; margin-bottom: 4px; }
+  .pv-hero h3 { margin: 0 0 4px; font: 20px/1.1 var(--serif); font-weight: 400; }
+  .pv-hero p { margin: 0; color: #d4dae9; }
+  .pv-body { padding: 0 12px 12px; margin-top: -22px; }
+  .pv-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .pv-star { color: var(--gold); font-size: 16px; letter-spacing: 2px; }
+  .pv-btn { background: var(--ink); color: #fff; border: 0; border-radius: 6px; padding: 6px 12px; font-weight: 600; }
+  .pv-contact { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .pv-contact b { color: var(--gold-deep); text-transform: uppercase; font-size: 10px; letter-spacing: .06em; display: block; margin-bottom: 3px; }
+  .pv-foot { text-align: center; color: var(--muted); padding: 8px; font-size: 11px; }
+  @media (max-width: 980px) { .site-grid { grid-template-columns: 1fr; } .pv-wrap { position: static; } .colors { grid-template-columns: 1fr; } .two { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .imgbox { grid-template-columns: 1fr; } }
+
   .print-only { display: none; }
 
   @media (max-width: 980px) {
@@ -232,6 +280,7 @@
       <button class="tab" role="tab" data-view="overview" aria-selected="true">Overview</button>
       <button class="tab" role="tab" data-view="reviews" aria-selected="false">Reviews <span class="badge" id="newBadge" hidden>0</span></button>
       <button class="tab" role="tab" data-view="team" id="teamTab" aria-selected="false" hidden>Team access</button>
+      <button class="tab" role="tab" data-view="site" id="siteTab" aria-selected="false" hidden>Site settings</button>
     </div>
   </nav>
 
@@ -303,6 +352,87 @@
       <div style="height:40px"></div>
     </section>
 
+    <!-- Site settings -->
+    <section id="view-site" hidden>
+      <div class="site-grid" style="margin-top:18px">
+        <div>
+          <div class="card site-card" data-admin-only>
+            <h2>Text and colours</h2>
+            <p class="lead">Changes the wording and colour scheme of the guest page.</p>
+            <div class="two">
+              <div class="sf"><label for="stName">Hotel name <span style="color:var(--danger)">*</span></label><input type="text" id="stName" maxlength="80"></div>
+              <div class="sf"><label for="stSub">Location line</label><input type="text" id="stSub" maxlength="80" placeholder="e.g. Abuja"></div>
+            </div>
+            <div class="sf"><label for="stTag">Tagline (small line above the headline)</label><input type="text" id="stTag" maxlength="160"></div>
+            <div class="sf"><label for="stTitle">Headline <span style="color:var(--danger)">*</span></label><input type="text" id="stTitle" maxlength="160"></div>
+            <div class="sf"><label for="stText">Intro text under the headline</label><textarea id="stText" maxlength="400"></textarea></div>
+            <div class="sf"><label for="stFoot">Footer text</label><input type="text" id="stFoot" maxlength="160"></div>
+
+            <div class="colors">
+              <div class="sf"><label for="clPrimary">Main colour</label><div class="cpick"><input type="color" id="clPrimary" aria-label="Main colour picker"><input type="text" id="clPrimaryHex" maxlength="7" aria-label="Main colour hex code"></div><span class="hint">Header, hero, buttons. Must be dark.</span></div>
+              <div class="sf"><label for="clAccent">Accent colour</label><div class="cpick"><input type="color" id="clAccent" aria-label="Accent colour picker"><input type="text" id="clAccentHex" maxlength="7" aria-label="Accent colour hex code"></div><span class="hint">Stars and highlights.</span></div>
+              <div class="sf"><label for="clBg">Page background</label><div class="cpick"><input type="color" id="clBg" aria-label="Background colour picker"><input type="text" id="clBgHex" maxlength="7" aria-label="Background colour hex code"></div><span class="hint">Behind the form cards.</span></div>
+            </div>
+            <div class="msg-err" id="stErr" role="alert"></div>
+            <div class="save-row">
+              <button class="btn btn-primary" id="stSave" type="button">Save text and colours</button>
+              <button class="btn btn-ghost" id="clReset" type="button">Reset colours to default</button>
+            </div>
+            <div class="meta-line" id="stMeta"></div>
+          </div>
+
+          <div class="card site-card" data-admin-only>
+            <h2>Logo and home picture</h2>
+            <p class="lead">Images are shrunk automatically so the guest page stays fast.</p>
+            <div class="imgbox">
+              <div class="thumb" id="imLogoThumb">No logo</div>
+              <div><b>Logo</b><span class="hint">PNG with a transparent background works best. Shown top left.</span>
+                <div class="btns"><button class="btn btn-ghost" id="imLogoPick" type="button">Choose logo</button><button class="btn btn-ghost" id="imLogoDel" type="button">Remove</button></div>
+                <input type="file" id="imLogoFile" accept="image/*" hidden></div>
+            </div>
+            <div class="imgbox">
+              <div class="thumb cover" id="imHeroThumb">No picture</div>
+              <div><b>Home picture</b><span class="hint">Wide landscape photo, at least 1600 pixels across. A tinted layer is added so the headline stays readable.</span>
+                <div class="btns"><button class="btn btn-ghost" id="imHeroPick" type="button">Choose picture</button><button class="btn btn-ghost" id="imHeroDel" type="button">Remove</button></div>
+                <input type="file" id="imHeroFile" accept="image/*" hidden></div>
+            </div>
+            <div class="msg-err" id="imErr" role="alert"></div>
+            <div class="save-row"><button class="btn btn-primary" id="imSave" type="button">Save images</button><span class="hint" id="imDirty"></span></div>
+            <div class="meta-line" id="imMeta"></div>
+          </div>
+
+          <div class="card site-card">
+            <h2>Reservation contact</h2>
+            <p class="lead">Shown in a Reservations section on the guest page. Leave a box empty to hide that item.</p>
+            <div class="two">
+              <div class="sf"><label for="ctTitle">Section title</label><input type="text" id="ctTitle" maxlength="60"></div>
+              <div class="sf"><label for="ctEmail">Email</label><input type="email" id="ctEmail" maxlength="200"></div>
+            </div>
+            <div class="sf"><label for="ctPhones">Phone numbers</label><input type="text" id="ctPhones" maxlength="120"><span class="hint">Separate several numbers with commas.</span></div>
+            <div class="sf"><label for="ctWeb">Website</label><input type="text" id="ctWeb" maxlength="200" placeholder="https://www.example.com"></div>
+            <div class="sf"><label for="ctNote">Short note (optional)</label><textarea id="ctNote" maxlength="400" placeholder="e.g. Reservations desk is open 24 hours."></textarea></div>
+            <div class="msg-err" id="ctErr" role="alert"></div>
+            <div class="save-row"><button class="btn btn-primary" id="ctSave" type="button">Save contact</button></div>
+            <div class="meta-line" id="ctMeta"></div>
+          </div>
+        </div>
+
+        <div class="card pv-wrap">
+          <h2>Live preview</h2>
+          <div class="hint">Shows your unsaved changes. The real page adapts to phones and tablets.</div>
+          <div class="pv" id="pv">
+            <div class="pv-top"><span class="pv-mark" id="pvMark">A</span><div><b id="pvName"></b><small id="pvSub"></small></div></div>
+            <div class="pv-hero" id="pvHero"><small id="pvTag"></small><h3 id="pvTitle"></h3><p id="pvText"></p></div>
+            <div class="pv-body">
+              <div class="pv-card"><span class="pv-star">&#9733;&#9733;&#9733;&#9733;&#9734;</span><button class="pv-btn" type="button" tabindex="-1">Submit review</button></div>
+              <div class="pv-contact"><b id="pvCtTitle"></b><div id="pvCt"></div></div>
+            </div>
+            <div class="pv-foot" id="pvFoot"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Team -->
     <section id="view-team" hidden>
       <div class="rolebox">
@@ -371,7 +501,7 @@
 
 <script type="module">
 import { firebaseConfig, isConfigured } from "./firebase-config.js";
-import { GROUPS, LABELS, GROUP_OF, PURPOSES, ROLES, STATUS_LABELS } from "./shared.js";
+import { GROUPS, LABELS, GROUP_OF, PURPOSES, ROLES, STATUS_LABELS, DEFAULT_SITE, DEFAULT_CONTACT, withDefaults, applyTheme, rgba, isHex, luminance, cleanUrl, isEmail, phoneList, isDataImage } from "./shared.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -461,6 +591,9 @@ function startApp() {
   $("meName").textContent = state.me.name || state.me.email;
   $("meRole").textContent = ROLES[state.me.role] || state.me.role;
   $("teamTab").hidden = !isAdmin();
+  $("siteTab").hidden = !canManage();
+  document.querySelectorAll("[data-admin-only]").forEach((e) => (e.hidden = !isAdmin()));
+  if (canManage()) loadSite();
   showGate("app");
   switchView("overview");
 
@@ -525,8 +658,9 @@ function setLive(on) {
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => switchView(t.dataset.view)));
 function switchView(v) {
   document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === v)));
-  ["overview", "reviews", "team"].forEach((n) => ($("view-" + n).hidden = n !== v));
-  $("filters").hidden = v === "team";
+  ["overview", "reviews", "team", "site"].forEach((n) => ($("view-" + n).hidden = n !== v));
+  $("filters").hidden = v === "team" || v === "site";
+  if (v === "site") updatePreview();
   if (v === "overview") refresh();
 }
 const currentView = () => (document.querySelector('.tab[aria-selected="true"]') || {}).dataset?.view;
@@ -854,6 +988,184 @@ $("teamForm").addEventListener("submit", async (e) => {
     $("teamForm").reset();
     toast("Access granted", email + " can now sign in.");
   } catch (err) { console.error(err); toast("Could not add", "Check your permissions.", null, true); }
+});
+
+/* ---------- site settings ---------- */
+const site = { text: { ...DEFAULT_SITE }, contact: { ...DEFAULT_CONTACT }, media: { logo: "", heroImage: "" }, imgDirty: false };
+const val = (id) => $(id).value.trim();
+
+function stamp(d) {
+  if (!d || !d.updatedBy) return "Not saved yet. The guest page is showing the defaults.";
+  const t = d.updatedAt && d.updatedAt.toDate ? " on " + fmtDateTime(d.updatedAt.toDate()) : "";
+  return "Last saved by " + d.updatedBy + t + ".";
+}
+
+async function loadSite() {
+  try {
+    const [s, c, m] = await Promise.all(["site", "contact", "media"].map((n) => getDoc(doc(db, "settings", n))));
+    const sd = s.exists() ? s.data() : null, cd = c.exists() ? c.data() : null, md = m.exists() ? m.data() : null;
+    site.text = withDefaults(sd, DEFAULT_SITE);
+    site.contact = withDefaults(cd, DEFAULT_CONTACT);
+    site.media = { logo: (md && md.logo) || "", heroImage: (md && md.heroImage) || "" };
+    site.imgDirty = false;
+    $("stMeta").textContent = stamp(sd); $("ctMeta").textContent = stamp(cd); $("imMeta").textContent = stamp(md);
+    fillSiteForm();
+  } catch (e) {
+    console.error(e);
+    toast("Could not load site settings", "Check your connection and reopen this tab.", null, true);
+  }
+}
+
+function fillSiteForm() {
+  const t = site.text, c = site.contact;
+  $("stName").value = t.hotelName; $("stSub").value = t.hotelSub; $("stTag").value = t.tagline;
+  $("stTitle").value = t.heroTitle; $("stText").value = t.heroText; $("stFoot").value = t.footerText;
+  setColor("clPrimary", t.colorPrimary); setColor("clAccent", t.colorAccent); setColor("clBg", t.colorBg);
+  $("ctTitle").value = c.contactTitle; $("ctEmail").value = c.email; $("ctPhones").value = c.phones;
+  $("ctWeb").value = c.website; $("ctNote").value = c.note;
+  drawThumbs();
+  updatePreview();
+}
+function setColor(id, v) { $(id).value = isHex(v) ? v : "#000000"; $(id + "Hex").value = v; }
+
+/* colour pickers <-> hex boxes */
+["clPrimary", "clAccent", "clBg"].forEach((id) => {
+  $(id).addEventListener("input", () => { $(id + "Hex").value = $(id).value; updatePreview(); });
+  $(id + "Hex").addEventListener("input", () => {
+    let v = $(id + "Hex").value.trim();
+    if (v && v[0] !== "#") v = "#" + v;
+    if (isHex(v)) $(id).value = v;
+    updatePreview();
+  });
+});
+$("clReset").addEventListener("click", () => {
+  setColor("clPrimary", DEFAULT_SITE.colorPrimary); setColor("clAccent", DEFAULT_SITE.colorAccent); setColor("clBg", DEFAULT_SITE.colorBg);
+  updatePreview();
+});
+["stName", "stSub", "stTag", "stTitle", "stText", "stFoot", "ctTitle", "ctEmail", "ctPhones", "ctWeb", "ctNote"]
+  .forEach((id) => $(id).addEventListener("input", updatePreview));
+
+function readText() {
+  const hex = (id) => { let v = val(id + "Hex"); if (v && v[0] !== "#") v = "#" + v; return v.toLowerCase(); };
+  return {
+    hotelName: val("stName"), hotelSub: val("stSub"), tagline: val("stTag"), heroTitle: val("stTitle"),
+    heroText: val("stText"), footerText: val("stFoot"),
+    colorPrimary: hex("clPrimary"), colorAccent: hex("clAccent"), colorBg: hex("clBg"),
+  };
+}
+function readContact() {
+  return { contactTitle: val("ctTitle"), email: val("ctEmail"), phones: val("ctPhones"), website: val("ctWeb"), note: val("ctNote") };
+}
+
+function updatePreview() {
+  if ($("view-site").hidden) return;
+  const t = readText(), c = readContact();
+  const primary = applyTheme($("pv"), t);
+  $("pvName").textContent = t.hotelName || DEFAULT_SITE.hotelName;
+  $("pvSub").textContent = t.hotelSub;
+  const mk = $("pvMark"); mk.textContent = "";
+  if (isDataImage(site.media.logo)) { const im = new Image(); im.src = site.media.logo; im.alt = ""; mk.className = "pv-mark has-logo"; mk.append(im); }
+  else { mk.className = "pv-mark"; mk.textContent = (t.hotelName || "A").trim().charAt(0).toUpperCase(); }
+  $("pvTag").textContent = t.tagline; $("pvTitle").textContent = t.heroTitle || DEFAULT_SITE.heroTitle; $("pvText").textContent = t.heroText;
+  const hero = $("pvHero");
+  if (isDataImage(site.media.heroImage)) { const veil = rgba(primary, 0.74); hero.style.backgroundImage = "linear-gradient(" + veil + "," + veil + "), url(\"" + site.media.heroImage + "\")"; }
+  else hero.style.backgroundImage = "none";
+  $("pvFoot").textContent = t.footerText;
+  $("pvCtTitle").textContent = c.contactTitle || DEFAULT_CONTACT.contactTitle;
+  $("pvCt").textContent = [c.email, phoneList(c.phones).join(" / "), c.website].filter(Boolean).join("  |  ");
+}
+
+/* images: shrink in the browser, store as text in the database */
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("unreadable")); };
+    img.src = url;
+  });
+}
+async function shrink(file, { maxDim, type, quality, maxChars }) {
+  const img = await loadImage(file);
+  const iw = img.naturalWidth || 300, ih = img.naturalHeight || 300;
+  let scale = Math.min(1, maxDim / Math.max(iw, ih)), q = quality;
+  for (let i = 0; i < 10; i++) {
+    const w = Math.max(1, Math.round(iw * scale)), hh = Math.max(1, Math.round(ih * scale));
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = hh;
+    const cx = cv.getContext("2d");
+    if (type === "image/jpeg") { cx.fillStyle = "#ffffff"; cx.fillRect(0, 0, w, hh); }
+    cx.drawImage(img, 0, 0, w, hh);
+    const out = cv.toDataURL(type, q);
+    if (out.length <= maxChars) return out;
+    if (type === "image/jpeg" && q > 0.5) q -= 0.08; else scale *= 0.82;
+  }
+  throw new Error("toobig");
+}
+function drawThumbs() {
+  const put = (id, src, empty) => {
+    const box = $(id); box.textContent = "";
+    if (isDataImage(src)) { const im = new Image(); im.src = src; im.alt = ""; box.append(im); } else box.textContent = empty;
+  };
+  put("imLogoThumb", site.media.logo, "No logo");
+  put("imHeroThumb", site.media.heroImage, "No picture");
+  $("imDirty").textContent = site.imgDirty ? "Unsaved image changes" : "";
+}
+async function pickImage(fileInputId, key, opts) {
+  const f = $(fileInputId).files[0];
+  $(fileInputId).value = "";
+  if (!f) return;
+  $("imErr").textContent = "";
+  if (!f.type.startsWith("image/")) { $("imErr").textContent = "Please choose an image file."; return; }
+  try {
+    site.media[key] = await shrink(f, opts);
+    site.imgDirty = true; drawThumbs(); updatePreview();
+  } catch (e) {
+    $("imErr").textContent = e.message === "toobig" ? "That image is too detailed to shrink enough. Try a simpler or smaller one." : "That file could not be read as an image.";
+  }
+}
+$("imLogoPick").addEventListener("click", () => $("imLogoFile").click());
+$("imHeroPick").addEventListener("click", () => $("imHeroFile").click());
+$("imLogoFile").addEventListener("change", () => pickImage("imLogoFile", "logo", { maxDim: 420, type: "image/png", quality: 1, maxChars: 190000 }));
+$("imHeroFile").addEventListener("change", () => pickImage("imHeroFile", "heroImage", { maxDim: 1800, type: "image/jpeg", quality: 0.82, maxChars: 640000 }));
+$("imLogoDel").addEventListener("click", () => { site.media.logo = ""; site.imgDirty = true; drawThumbs(); updatePreview(); });
+$("imHeroDel").addEventListener("click", () => { site.media.heroImage = ""; site.imgDirty = true; drawThumbs(); updatePreview(); });
+
+/* saving */
+async function saveDoc(name, data, errId, btnId, metaId) {
+  const btn = $(btnId); btn.disabled = true;
+  try {
+    await setDoc(doc(db, "settings", name), { ...data, updatedAt: serverTimestamp(), updatedBy: state.me.email });
+    $(metaId).textContent = "Last saved by " + state.me.email + " on " + fmtDateTime(new Date()) + ".";
+    toast("Saved", "The guest page now uses these settings.");
+    return true;
+  } catch (e) {
+    console.error(e);
+    $(errId).textContent = "Could not save. You may not have permission, or the connection dropped.";
+    return false;
+  } finally { btn.disabled = false; }
+}
+$("stSave").addEventListener("click", async () => {
+  if (!isAdmin()) return;
+  const t = readText();
+  $("stErr").textContent = "";
+  if (!t.hotelName) { $("stErr").textContent = "Enter the hotel name."; return; }
+  if (!t.heroTitle) { $("stErr").textContent = "Enter a headline."; return; }
+  if (!isHex(t.colorPrimary) || !isHex(t.colorAccent) || !isHex(t.colorBg)) { $("stErr").textContent = "Colours must look like #0f1b33 (a # then six letters or digits)."; return; }
+  if (luminance(t.colorPrimary) > 0.3) { $("stErr").textContent = "The main colour is too light for white text. Choose a darker colour."; return; }
+  if (await saveDoc("site", t, "stErr", "stSave", "stMeta")) site.text = { ...t };
+});
+$("imSave").addEventListener("click", async () => {
+  if (!isAdmin()) return;
+  $("imErr").textContent = "";
+  if (await saveDoc("media", { logo: site.media.logo, heroImage: site.media.heroImage }, "imErr", "imSave", "imMeta")) { site.imgDirty = false; drawThumbs(); }
+});
+$("ctSave").addEventListener("click", async () => {
+  if (!canManage()) return;
+  const c = readContact();
+  $("ctErr").textContent = "";
+  if (c.email && !isEmail(c.email)) { $("ctErr").textContent = "That email address does not look right."; return; }
+  if (c.website) { const u = cleanUrl(c.website); if (!u) { $("ctErr").textContent = "That website address does not look right."; return; } c.website = u; $("ctWeb").value = u; }
+  if (await saveDoc("contact", c, "ctErr", "ctSave", "ctMeta")) { site.contact = { ...c }; updatePreview(); }
 });
 
 /* ---------- export / print ---------- */

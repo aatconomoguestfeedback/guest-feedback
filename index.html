@@ -130,6 +130,20 @@
 
   .notice { background: #fff4e5; border: 1px solid #f0c987; color: #6b4b0b; padding: 14px 18px; border-radius: 10px; margin: 0 0 18px; }
   [hidden] { display: none !important; }
+  .hero { background-size: cover; background-position: center; }
+  .hero.has-img::after { display: none; }
+  .mark.has-logo { width: auto; max-width: 170px; height: 44px; border: 0; background: transparent; border-radius: 0; }
+  .mark img { height: 100%; width: auto; max-width: 170px; object-fit: contain; display: block; }
+  .toplink { margin-left: auto; color: #fff; text-decoration: none; font-size: .92rem; font-weight: 600; border: 1px solid rgba(255,255,255,.35); padding: 7px 14px; border-radius: 8px; }
+  .toplink:hover { background: rgba(255,255,255,.12); }
+  .reserve { padding: 0 0 56px; }
+  .reserve-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 30px rgba(15,27,51,.06); padding: 28px 30px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: center; }
+  .reserve-card h2 { font: 1.5rem var(--serif); font-weight: 400; margin: 0 0 4px; }
+  .reserve-card p { margin: 0; color: var(--muted); font-size: .93rem; }
+  .reserve-items { display: grid; grid-template-columns: repeat(3, auto); gap: 16px 32px; justify-content: start; }
+  .r-lbl { display: block; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 3px; }
+  .r-item a { color: var(--ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; display: block; }
+  .r-item a:hover { text-decoration: underline; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 0 40px; }
 
@@ -139,8 +153,13 @@
     .summary .checklist { display: none; }
     .big { font-size: 2.6rem; }
   }
+  @media (max-width: 900px) {
+    .reserve-card { grid-template-columns: 1fr; }
+    .reserve-items { grid-template-columns: 1fr; }
+  }
   @media (max-width: 560px) {
     .step { padding: 22px 18px; }
+    .toplink { padding: 6px 10px; font-size: .85rem; }
     .fields { grid-template-columns: 1fr; }
     .rate-row { flex-direction: column; align-items: flex-start; gap: 2px; }
     .rate-word { display: none; }
@@ -153,16 +172,17 @@
 
 <header class="topbar">
   <div class="wrap">
-    <div class="mark" aria-hidden="true">A</div>
-    <div class="brandtxt"><strong>AATC Onomo Allure Hotel</strong><span>Abuja</span></div>
+    <div class="mark" id="brandMark" aria-hidden="true">A</div>
+    <div class="brandtxt"><strong id="brandName">AATC Onomo Allure Hotel</strong><span id="brandSub">Abuja</span></div>
+    <a class="toplink" href="#reservations">Reservations</a>
   </div>
 </header>
 
-<section class="hero">
+<section class="hero" id="hero">
   <div class="wrap">
-    <div class="tag">Where luxury meets warm hospitality</div>
-    <h1>How was your stay with us?</h1>
-    <p>Your feedback goes straight to our management team. It takes about two minutes.</p>
+    <div class="tag" id="heroTag">Where luxury meets warm hospitality</div>
+    <h1 id="heroTitle">How was your stay with us?</h1>
+    <p id="heroText">Your feedback goes straight to our management team. It takes about two minutes.</p>
   </div>
 </section>
 
@@ -260,13 +280,26 @@
   </aside>
 </div>
 
-<footer>AATC Onomo Allure Hotel Abuja</footer>
+<section class="reserve" id="reservations" aria-labelledby="rsvTitle">
+  <div class="wrap">
+    <div class="reserve-card">
+      <div><h2 id="rsvTitle">Reservations</h2><p id="rsvNote" hidden></p></div>
+      <div class="reserve-items">
+        <div class="r-item" id="rsvEmailBox"><span class="r-lbl">Email</span><a id="rsvEmail"></a></div>
+        <div class="r-item" id="rsvPhoneBox"><span class="r-lbl">Phone</span><div id="rsvPhones"></div></div>
+        <div class="r-item" id="rsvWebBox"><span class="r-lbl">Website</span><a id="rsvWeb" target="_blank" rel="noopener"></a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footerText">AATC Onomo Allure Hotel Abuja</footer>
 
 <script type="module">
 import { firebaseConfig, isConfigured } from "./firebase-config.js";
-import { GROUPS, PURPOSES } from "./shared.js";
+import { GROUPS, PURPOSES, DEFAULT_SITE, DEFAULT_CONTACT, withDefaults, applyTheme, rgba, cleanUrl, isEmail, phoneList, telHref, isDataImage } from "./shared.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 const STAR = "M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z";
@@ -468,6 +501,89 @@ $("form").addEventListener("submit", async (ev) => {
     btn.disabled = false; btn.textContent = "Submit review";
   }
 });
+
+/* ---------- site settings (logo, text, colours, reservation contact) ---------- */
+const CACHE_KEY = "onomo-site-cache-v1";
+
+function renderSettings(site, contact, media) {
+  const primary = applyTheme(document.documentElement, site);
+  const name = site.hotelName || DEFAULT_SITE.hotelName;
+  document.title = "Share your stay | " + name;
+
+  $("brandName").textContent = name;
+  $("brandSub").textContent = site.hotelSub; $("brandSub").hidden = !site.hotelSub;
+
+  const mark = $("brandMark");
+  mark.textContent = "";
+  if (isDataImage(media.logo)) {
+    const im = new Image(); im.alt = name + " logo"; im.src = media.logo;
+    mark.className = "mark has-logo"; mark.removeAttribute("aria-hidden"); mark.append(im);
+  } else {
+    mark.className = "mark"; mark.setAttribute("aria-hidden", "true");
+    mark.textContent = name.trim().charAt(0).toUpperCase() || "A";
+  }
+
+  $("heroTag").textContent = site.tagline; $("heroTag").hidden = !site.tagline;
+  $("heroTitle").textContent = site.heroTitle || DEFAULT_SITE.heroTitle;
+  $("heroText").textContent = site.heroText; $("heroText").hidden = !site.heroText;
+  const hero = $("hero");
+  if (isDataImage(media.heroImage)) {
+    const veil = rgba(primary, 0.74);
+    hero.style.backgroundImage = "linear-gradient(" + veil + "," + veil + "), url(\"" + media.heroImage + "\")";
+    hero.classList.add("has-img");
+  } else {
+    hero.style.backgroundImage = ""; hero.classList.remove("has-img");
+  }
+  $("footerText").textContent = site.footerText; $("footerText").hidden = !site.footerText;
+
+  /* reservations */
+  $("rsvTitle").textContent = contact.contactTitle || DEFAULT_CONTACT.contactTitle;
+  $("rsvNote").textContent = contact.note; $("rsvNote").hidden = !contact.note;
+
+  const em = $("rsvEmail");
+  $("rsvEmailBox").hidden = !contact.email;
+  em.textContent = contact.email;
+  if (isEmail(contact.email)) em.href = "mailto:" + contact.email; else em.removeAttribute("href");
+
+  const phones = phoneList(contact.phones);
+  $("rsvPhoneBox").hidden = !phones.length;
+  $("rsvPhones").textContent = "";
+  phones.forEach((p) => {
+    const a = document.createElement("a");
+    a.textContent = p; a.href = telHref(p);
+    $("rsvPhones").appendChild(a);
+  });
+
+  const url = cleanUrl(contact.website);
+  $("rsvWebBox").hidden = !url;
+  if (url) { $("rsvWeb").href = url; $("rsvWeb").textContent = url.replace(/^https?:\/\//, "").replace(/\/$/, ""); }
+}
+
+function fromDocs(s, c, m) {
+  return {
+    site: withDefaults(s, DEFAULT_SITE),
+    contact: withDefaults(c, DEFAULT_CONTACT),
+    media: { logo: (m && m.logo) || "", heroImage: (m && m.heroImage) || "" },
+  };
+}
+
+async function loadSettings() {
+  // 1) show defaults straight away, 2) swap in the last saved copy, 3) fetch the latest
+  let cur = fromDocs(null, null, null);
+  renderSettings(cur.site, cur.contact, cur.media);
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if (cached && cached.site && cached.contact && cached.media) { cur = cached; renderSettings(cur.site, cur.contact, cur.media); }
+  } catch (e) { /* no cache */ }
+  if (!db) return;
+  try {
+    const [s, c, m] = await Promise.all(["site", "contact", "media"].map((n) => getDoc(doc(db, "settings", n))));
+    cur = fromDocs(s.exists() ? s.data() : null, c.exists() ? c.data() : null, m.exists() ? m.data() : null);
+    renderSettings(cur.site, cur.contact, cur.media);
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(cur)); } catch (e) { /* too large or blocked */ }
+  } catch (e) { console.error("Could not load site settings", e); }
+}
+loadSettings();
 
 update();
 </script>
