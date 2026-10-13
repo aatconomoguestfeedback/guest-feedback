@@ -400,7 +400,7 @@ let auth, db, unsubReviews = null, unsubStaff = null;
 const charts = {};
 
 function showGate(which) {
-  $("app").hidden = which === "app";
+  $("app").hidden = which !== "app";
   $("gate").hidden = which === "app";
   ["gLoading", "gConfig", "gSignin", "gDenied"].forEach((id) => ($(id).hidden = id !== which));
 }
